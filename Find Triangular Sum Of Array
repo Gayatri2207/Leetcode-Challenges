@@ -1,0 +1,19 @@
+class Solution {
+    public int resarr(int[] nums){
+        if(nums.length==1){
+            return nums[0];
+        }
+        int arr[]=new int[nums.length-1];
+        int first=nums[0];
+        int count=0;
+        for(int i=1;i<nums.length;i++){
+            int res=(first+nums[i])%10;
+            arr[count++]=res;
+            first=nums[i];
+        }
+        return resarr(arr);
+    }
+    public int triangularSum(int[] nums) {
+        return resarr(nums);
+    }
+}

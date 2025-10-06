@@ -1,0 +1,90 @@
+class DisjointSet {
+    int[] rank, parent, size;
+
+    DisjointSet(int n) {
+        rank = new int[n + 1];
+        parent = new int[n + 1];
+        size = new int[n + 1];
+        for (int i = 0; i <= n; i++) {
+            parent[i] = i;
+            size[i] = 1;
+        }
+    }
+
+    int findUPar(int node) {
+        if (node == parent[node])
+            return node;
+        return parent[node] = findUPar(parent[node]);
+    }
+
+    void unionBySize(int u, int v) {
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if (ulp_u == ulp_v)
+            return;
+        if (size[ulp_u] < size[ulp_v]) {
+            parent[ulp_u] = ulp_v;
+            size[ulp_v] += size[ulp_u];
+        } else {
+            parent[ulp_v] = ulp_u;
+            size[ulp_u] += size[ulp_v];
+        }
+    }
+}
+
+class Solution {
+    public int swimInWater(int[][] grid) {
+        int n = grid.length;
+        int m = grid[0].length;
+
+        boolean[][] vis = new boolean[n][m];
+        List<int[]> events = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                events.add(new int[] { grid[i][j], i, j });
+            }
+        }
+
+        events.sort((a, b) -> a[0] - b[0]);
+
+        int[] delRow = { 0, 1, 0, -1 };
+        int[] delCol = { 1, 0, -1, 0 };
+        DisjointSet ds = new DisjointSet(n * m);
+
+        for (int[] event : events) {
+            int time = event[0];
+            int row = event[1];
+            int col = event[2];
+
+            vis[row][col] = true;
+
+            for (int ind = 0; ind < 4; ind++) {
+                int nRow = row + delRow[ind];
+                int nCol = col + delCol[ind];
+
+                if (isValid(nRow, nCol, n, m) && vis[nRow][nCol]) {
+                    int nodeNo = row * n + col;
+                    int adjNode = nRow * n + nCol;
+
+                    if (ds.findUPar(nodeNo) != ds.findUPar(adjNode)) {
+                        ds.unionBySize(nodeNo, adjNode);
+                    }
+                }
+            }
+
+            int start = 0;
+            int end = (n * m) - 1;
+
+            if (ds.findUPar(start) == ds.findUPar(end)) {
+                return time;
+            }
+        }
+
+        return -1;
+    }
+
+    boolean isValid(int i, int j, int n, int m) {
+        return i >= 0 && i < n && j >= 0 && j < m;
+    }
+}

@@ -1,0 +1,31 @@
+class Solution {
+    public int countCollisions(String directions) {
+        int n = directions.length();
+
+        // Find first non-'L'
+        int start = 0;
+        while (start < n && directions.charAt(start) == "L".charAt(0)) {
+            start++;
+        }
+
+        // Find last non-'R'
+        int end = n - 1;
+        while (end >= 0 && directions.charAt(end) == "R".charAt(0)) {
+            end--;
+        }
+
+        // No collisions possible
+        if (start >= end) return 0;
+
+        int collisions = 0;
+
+        // Count moving cars inside range
+        for (int i = start; i <= end; i++) {
+            if (directions.charAt(i) != 'S') {
+                collisions++;
+            }
+        }
+
+        return collisions;
+    }
+}

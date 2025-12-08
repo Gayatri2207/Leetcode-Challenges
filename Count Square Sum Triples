@@ -1,0 +1,27 @@
+class Solution {
+    public int countTriples(int n) {
+        Set<Integer> set = new HashSet<>();
+
+        for(int i=1; i <= n; i++)
+        {
+            set.add(i*i);
+        }
+
+        int cnt = 0;
+        List<Integer> list = new ArrayList<>();
+
+        for(int i=1; i<= n; i++){
+
+            for(int j=i+1; j<=n; j++){
+
+                
+                    if(set.contains(i*i + j*j)){
+                        list.add(1);
+                    }
+                
+            }
+        }
+
+        return list.size()*2;
+    }
+}

@@ -1,0 +1,23 @@
+class Solution {
+    public int specialTriplets(int[] nums) {
+         int MOD = 1000000007;
+        int lCount[]=new int[200000];
+        int rCount[]=new int[200000];
+        for(int i:nums){
+            rCount[i]++;
+        }
+
+        long res=0L;
+        for(int i=0;i<nums.length;i++){
+            rCount[nums[i]]--;
+            int target=nums[i]*2;
+            if(target<200000){
+                long add=((long)rCount[target]*lCount[target])%MOD;
+                res=(res+add)%MOD;
+            }
+            lCount[nums[i]]++;
+        }
+        return (int)res;
+
+    }
+}

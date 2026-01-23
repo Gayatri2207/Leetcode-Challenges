@@ -1,0 +1,99 @@
+class Solution {
+    int[] leftParent, rightParent;
+
+	public int minimumPairRemoval(int[] nums) {
+		int n = nums.length, ans = 0, cnt = 0;
+		leftParent = new int[n];
+		rightParent = new int[n];
+		long[] prefixSum = new long[n + 1];
+		prefixSum[0] = 0;
+		prefixSum[1] = nums[0];
+		PriorityQueue<long[]> pq = new PriorityQueue<>((o1, o2) -> o1[0] == o2[0] ? Long.compare(o1[1], o2[1]) : Long.compare(o1[0], o2[0]));
+		for (int i = 1; i < n; i++) {
+			prefixSum[i + 1] = prefixSum[i] + nums[i];
+			leftParent[i] = i;
+			rightParent[i] = i;
+			pq.offer(new long[] { nums[i - 1] + nums[i], i - 1, i });
+			if (nums[i - 1] > nums[i]) {
+				cnt++;
+			}
+		}
+		while (!pq.isEmpty() && cnt > 0) {
+			long[] range = pq.poll();
+			if (leftParent[(int) range[1]] != range[1] || rightParent[(int) range[2]] != range[2]) {
+				continue;
+			}
+			ans++;
+			if (prefixSum[find(rightParent, (int) range[1]) + 1] - prefixSum[(int) range[1]] > prefixSum[(int) range[2] + 1] - prefixSum[find(leftParent,
+				(int) range[2])]) {
+				cnt--;
+			}
+			if (range[1] > 0) {
+				int leftBound = find(leftParent, (int) range[1] - 1);
+				if (prefixSum[(int) range[1]] - prefixSum[leftBound] > prefixSum[find(rightParent, (int) range[1]) + 1] - prefixSum[(int) range[1]]) {
+					cnt--;
+				}
+			}
+			if (range[2] + 1 < n) {
+				int rightBound = find(rightParent, (int) range[2] + 1);
+				if (prefixSum[(int) range[2] + 1] - prefixSum[find(leftParent, (int) range[2])] > prefixSum[rightBound + 1] - prefixSum[(int) range[2] + 1]) {
+					cnt--;
+				}
+			}
+			unionLeft((int) range[1], (int) range[2]);
+			unionRight((int) range[2], (int) range[1]);
+			unionLeft((int) range[1], find(leftParent, (int) range[2]));
+			unionRight((int) range[2], find(rightParent, (int) range[1]));
+			if (range[1] > 0) {
+				int leftBound = find(leftParent, (int) range[1] - 1);
+				pq.offer(new long[] { prefixSum[(int) range[2] + 1] - prefixSum[leftBound], leftBound, range[2] });
+				if (prefixSum[(int) range[1]] - prefixSum[leftBound] > prefixSum[(int) range[2] + 1] - prefixSum[(int) range[1]]) {
+					cnt++;
+				}
+			}
+			if (range[2] + 1 < n) {
+				int rightBound = find(rightParent, (int) range[2] + 1);
+				pq.offer(new long[] { prefixSum[rightBound + 1] - prefixSum[(int) range[1]], range[1], rightBound });
+				if (prefixSum[(int) range[2] + 1] - prefixSum[(int) range[1]] > prefixSum[rightBound + 1]
+					- prefixSum[(int) range[2] + 1]) {
+					cnt++;
+				}
+			}
+		}
+		return ans;
+	}
+
+	private int find(int[] arr, int i) {
+		if (arr[i] == i)
+			return i;
+		int parent = find(arr, arr[i]);
+		arr[i] = parent;
+		return arr[i];
+	}
+
+	private void unionLeft(int i, int j) {
+		int pi = find(leftParent, i);
+		int pj = find(leftParent, j);
+		if (pi == pj)
+			return;
+		if (pi > pj) {
+			int temp = pi;
+			pi = pj;
+			pj = temp;
+		}
+		leftParent[pj] = pi;
+	}
+
+	private void unionRight(int i, int j) {
+		int pi = find(rightParent, i);
+		int pj = find(rightParent, j);
+		if (pi == pj)
+			return;
+		if (pi > pj) {
+			int temp = pi;
+			pi = pj;
+			pj = temp;
+		}
+		rightParent[pi] = pj;
+	}
+}

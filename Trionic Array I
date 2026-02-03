@@ -1,0 +1,41 @@
+class Solution {
+    public boolean isTrionic(int[] nums) {
+        if (nums.length <= 3) return false;  // need at least 4 elements
+        
+        int index = 1; // tracks how far we've processed
+        
+        // Phase 1: strictly increasing
+        for (int i = 1; i < nums.length; i++) {
+            if (nums[i] > nums[i - 1]) {
+                index++;
+            } else {
+                break;
+            }
+        }
+        
+        // If no initial increase OR fully increasing → not valid
+        if (index == 1 || index == nums.length) return false;
+        
+        // Phase 2: strictly decreasing
+        for (int i = index; i < nums.length; i++) {
+            if (nums[i] < nums[i - 1]) {
+                index++;
+            } else {
+                break;
+            }
+        }
+        
+        // If it ended after decreasing (no last increase) → not valid
+        if (index == nums.length) return false;
+        
+        // Phase 3: strictly increasing again
+        for (int i = index; i < nums.length; i++) {
+            if (nums[i] > nums[i - 1]) {
+                index++;
+            }
+        }
+        
+        // Valid trionic if we consumed the whole array
+        return index == nums.length;
+    }
+}

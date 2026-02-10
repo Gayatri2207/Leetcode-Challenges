@@ -1,0 +1,24 @@
+class Solution {
+    public int longestBalanced(int[] nums) {
+        int n = nums.length;
+        int maxLen = 0;
+        for(int i = 0; i < n;i++){
+            //HashSet to count the distinct elements and avoid duplicates
+            Set<Integer> even = new HashSet<>();
+            Set<Integer> odd = new HashSet<>();
+            for(int j = i ; j < n;j++){
+                //check if it is Odd or Even
+                if(nums[j] % 2 == 0){
+                    even.add(nums[j]);
+                }else{
+                    odd.add(nums[j]);
+                }
+                //Update the maxLen when size of odd or even sets are equal
+                if(even.size() == odd.size()){
+                    maxLen = Math.max(maxLen, j - i + 1);
+                }
+            }
+        }
+        return maxLen;
+    }
+}

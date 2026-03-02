@@ -1,0 +1,37 @@
+class Solution {
+    public int minSwaps(int[][] grid) {
+        int row = grid.length, col = grid[0].length;
+        List<Integer> lastOne = new ArrayList<>(row + 1);
+        for (int i = 0; i < row; i++) {
+            lastOne.add(i, -1);
+            for (int j = col - 1; j >= 0; j--) {
+                if (grid[i][j] == 1) {
+                    lastOne.set(i, j);
+                    break;
+                }
+            }
+        }
+        int step = 0;
+        for (int i = 0; i < row - 1; i++) {
+            if (lastOne.get(i) <= i) {
+                continue;
+            }
+            boolean flag = false;
+            for (int j = i + 1; j < row; j++) {
+                if (lastOne.get(j) <= i) {
+                    flag = true;
+                    step += j - i;
+                    int curFind = lastOne.get(j);
+                    lastOne.remove(j);
+                    lastOne.add(i, curFind);
+                    break;
+                }
+            }
+			// if there is no valid row left, return -1 directly
+            if (!flag) {
+                return -1;
+            }
+        }
+        return step;
+    }
+}

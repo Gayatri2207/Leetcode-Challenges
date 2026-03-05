@@ -1,0 +1,9 @@
+class Solution {
+    public int minOperations(String s) {
+        int diff = 0, n = s.length();
+        for (int i = 0; i < n; i++)
+            if ((s.charAt(i) & 1) != (i & 1)) diff++;
+
+        return Math.min(diff, n - diff);
+    }
+}

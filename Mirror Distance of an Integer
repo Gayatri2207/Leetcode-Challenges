@@ -1,0 +1,11 @@
+class Solution {
+    public int mirrorDistance(int n) {
+        if(n < 9){
+            return 0;
+        }
+        StringBuilder str = new StringBuilder(String.valueOf(n));
+        int xx = Integer.parseInt(str.reverse().toString());
+
+        return Math.abs(n - xx);
+    }
+}

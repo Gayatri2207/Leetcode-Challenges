@@ -1,0 +1,82 @@
+class Solution {
+    private class unionMaker{
+        int[] parent;
+        int[] rank;
+        public unionMaker(int n){
+            parent = new int[n];
+            rank = new int[n];
+            for(int i = 0;i < n;i++){
+                parent[i] = i;
+                rank[i] = 1;
+            }
+        }
+        public int parentFinder(int num){
+            if(num == parent[num]){
+                return num;
+            }
+            return parent[num] = parentFinder(parent[num]);
+        }
+        public void union(int num1, int num2){
+            int prt1 = parentFinder(num1);
+            int prt2 = parentFinder(num2);
+            if(prt2 != prt1){
+                if(rank[prt1] > rank[prt2]){
+                    parent[prt2] = prt1;
+                }
+                else if(rank[prt1] < rank[prt2]){
+                    parent[prt1] = prt2;
+                }
+                else{
+                    parent[prt1] = prt2;
+                    rank[prt2]++;
+                }
+            }
+        }
+    }
+    public int minimumHammingDistance(int[] source, int[] target, int[][] allowedSwaps) {
+        int len = source.length;
+        unionMaker unionMaker = new unionMaker(len);
+        
+        for(int[] pair: allowedSwaps){
+            unionMaker.union(pair[0], pair[1]);
+        }
+
+        HashMap<Integer, List<Integer>> collect = new HashMap<>();
+        for(int i = 0;i < len;i++){
+            int parent = unionMaker.parentFinder(i);
+            collect.putIfAbsent(parent, new ArrayList<>());
+            collect.get(parent).add(i);
+        }
+        
+        int count = 0;
+        for(List<Integer> indices: collect.values()){
+            HashMap<Integer, Integer> temp = new HashMap<>();
+
+            for(int ele: indices){
+                temp.put(source[ele], temp.getOrDefault(source[ele], 0)+1);
+                source[ele] = -1;
+            }
+            
+            for(int ele: indices){
+                if(!temp.containsKey(target[ele])){
+                    count++;
+                }
+                else if(temp.get(target[ele]) == 0){
+                    count++;
+                }
+                else{
+                    temp.put(target[ele], temp.getOrDefault(target[ele], 0)-1);
+                }
+            }
+        }
+        
+        for(int i = 0;i < len;i++){
+            if(source[i] != -1){
+                if(source[i] != target[i]){
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+}

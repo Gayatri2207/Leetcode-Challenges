@@ -1,0 +1,52 @@
+class Solution {
+    int n;
+    int m;
+    static int[]dr={-1,1,0,0};
+    static int[]dc={0,0,-1,1};
+    boolean[][]visit;
+    class pair{
+        int row,col,prow,pcol;
+        public pair(int row,int col,int prow,int pcol){
+            this.row=row;
+            this.col=col;
+            this.prow=prow;
+            this.pcol=pcol;
+        }
+    }
+    public boolean containsCycle(char[][] grid) {
+        n=grid.length;
+        m=grid[0].length;
+        visit=new boolean[n][m];
+        for(int i=0;i<n;i++){
+            for(int j=0;j<m;j++){
+                if(visit[i][j])continue;
+                if(bfs(grid,i,j))return true;
+            }
+        }
+        return false;
+    }public boolean bfs(char[][] grid,int i,int j){
+        Queue<pair>q=new LinkedList<>();
+        q.offer(new pair(i,j,-1,-1));
+        char ch=grid[i][j];
+        while(!q.isEmpty()){
+            pair curr=q.remove();
+            int r=curr.row;
+            int c=curr.col;
+            int pr=curr.prow;
+            int pc=curr.pcol;
+            if(visit[r][c])return true;
+            visit[r][c]=true;
+            for(int k=0;k<4;k++){
+                int nr=r+dr[k];
+                int nc=c+dc[k];
+                if(nr>=0&&nr<n&&nc>=0&&nc<m&&grid[nr][nc]==ch){
+                    if(!(nr==pr&&nc==pc)){
+                        q.offer(new pair(nr,nc,r,c));
+                    }
+                }
+
+            }
+        }
+        return false;
+    }
+}
